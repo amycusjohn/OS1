@@ -1,23 +1,20 @@
-This is the README for project 1 of OS Fall 2019. I had some issues with this project so I will outline them in this README.
+This is the README for project 1 of OS Spring 2020.
+I took OS last semester and am retaking for a better grade so my project is similar to my project last semester.
 Also, I used git. To see my commits, you can type git log into the command. 
-I also tried to use GITHUB but there was some strange error that I did not want 
-to waste time trying to fix. 
-I also made the directory test inside seidel.1 to test. 
-First, getopt works fine but my recursive directory call only prints the information
-of the "hidden" files, not of all my files for some reason. I referenced this 
-code for the recursive because every time I tried with other algorithms my 
-program crashed or the file format would be very hard to read. 
-https://johnloomis.org/ece537/notes/Files/Examples/printdir.html
-That being said, my file format is not correct as there are a bunch of 
-letters/number combos that I do not know where they came from and I cannot get rid of them. 
-Next, -h,-s, -p, -u, -g, -d, -l options all work. My print function already prints file type. 
-The number of linkes SHOULD work but for some reason I keep geting strange numbers.
-For information on how to print permissions, I used this website: http://codewiki.wikidot.com/c:system-calls:stat
+I have this linked up to my GITHUB repository
 
-I have never used stat before so it took me a while to figure out what parameters 
-were accepted, what functions were included, formatting, etc. 
+I referenced these sites and the Robbins/Robbins book for help with errno, perror, and stat functions
+Websites referenced:
+https://pubs.opengroup.org/onlinepubs/009695399/basedefs/dirent.h.html
+https://www.tutorialspoint.com/c_standard_library/c_function_perror.htm
+http://man7.org/linux/man-pages/man3/errno.3.html
+https://linux.die.net/man/2/stat
+https://pubs.opengroup.org/onlinepubs/009695399/functions/getcwd.html
+https://pubs.opengroup.org/onlinepubs/009695399/functions/getpwuid.html
 
-As mentioned in class, honesty is the best policy. I do not want you too come 
+The format for the date is weird. Even though there is no \n after the date, it prints the path of the file/dir on a
+separate line
+As mentioned in class, honesty is the best policy. I do not want you too come
 across any unexpected seg faults or issues like that. 
 ./dt to run 
 type make to make the program

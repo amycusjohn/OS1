@@ -1,6 +1,7 @@
 //Amy Seidel
 //CS4760 - OS 
 //Project 1
+//All the resources I have referenced are outlined in the README
 
 #include <time.h>
 #include <sys/types.h>
@@ -24,8 +25,8 @@ int hflag,tflag, gflag, pflag, iflag, uflag, sflag, Lflag, dflag,  Iflag = 0;
 
 
 int main( int argc, char *argv[] )  {
-	
-	//variables 
+
+	//variables
 	int var;
 
 	//while loop to execute getopt
@@ -90,21 +91,18 @@ int main( int argc, char *argv[] )  {
 
     char* root = ".";
 
-
+    //Checking if there is a directory specified
     if (argv[optind] == NULL) {
-        char origin[4096];
-        getcwd(origin, sizeof(origin));
-        root = origin;
+        char buff[2048];
+        getcwd(buff, sizeof(buff));
+        root = buff;
     }
     else {
         root = argv[optind];
     }
 
-    printf("directory scan of:  %s\n", root);
-
     printdir(root);
-
-    //return 0;
+    return 0;
 
 }
 /*****************************************
@@ -122,35 +120,40 @@ void printdir(char *dir)
 
     //variables for declaring directory and stat
     struct dirent *entry;
-    entry = readdir(d);
     struct stat statbuf;
-    lstat(entry->d_name, &statbuf);
     struct passwd* pwd;
-    char* fileType = "";
+    char* fType = "";
     struct group* grp;
 
+    //storing the value of the directory entry in entry
+    entry = readdir(d);
+    lstat(entry->d_name, &statbuf);
 
+    //while loop that runs until there are no more entries
     while((entry = readdir(d)) != NULL) {
-            char buffer[512];
+
+            char buf[512];
             if (S_ISDIR(statbuf.st_mode)) {
+
                 // ignoring "." and ".." directories
                 if (strcmp(".", entry->d_name) == 0 || strcmp("..", entry->d_name) == 0)
                     continue;
 
-                snprintf(buffer, sizeof(buffer), "%s/%s", dir, entry->d_name);
-                stat(buffer, &statbuf);
+              //  storing the information of the entry in the statbuf
+                snprintf(buf, sizeof(buf), "%s/%s", dir, entry->d_name);
+                stat(buf, &statbuf);
 
                 //print type of file
                 if (tflag == 1) {
                     if (S_ISDIR(statbuf.st_mode)) {
-                        fileType = "d";
-                        printf("%s", fileType);
+                        fType = "d";
+                        printf("%s", fType);
                     } else if (S_ISLNK(statbuf.st_mode)) {
-                        fileType = "s";
-                        printf("%s", fileType);
+                        fType = "s";
+                        printf("%s", fType);
                     } else {
-                        fileType = "-";
-                        printf("%s", fileType);
+                        fType = "-";
+                        printf("%s", fType);
                     }
                 }
 
@@ -171,68 +174,70 @@ void printdir(char *dir)
 
                 //print number of links to the inode
                 if (iflag == 1) {
-
-                    printf("%d\t", (unsigned int) statbuf.st_nlink);
+                    printf("%d\t",  statbuf.st_nlink);
                 }
 
                 //print UID
                 if (uflag == 1) {
                     pwd = getpwuid(statbuf.st_uid);
                     if ((pwd = getpwuid(statbuf.st_uid)) != NULL)
-                        printf("%-8.8s\t", pwd->pw_name);
+                        printf("%s\t", pwd->pw_name);
                     else
-                        printf("%-8d\t", statbuf.st_uid);
+                        printf("%d\t", statbuf.st_uid);
                 }
 
                 //print group id
                 if (gflag == 1) {
                     grp = getgrgid(statbuf.st_gid);
                     if ((grp = getgrgid(statbuf.st_gid)) != NULL)
-                        printf("%-8.8s\t", grp->gr_name);
+                        printf("%s\t", grp->gr_name);
                     else
-                        printf("%-8d\t", statbuf.st_gid);
+                        printf("%d\t", statbuf.st_gid);
                 }
 
                 //Print size
                 if (sflag == 1) {
-                    if (statbuf.st_size > 1000)
-                        printf("%5dK\t", statbuf.st_size / 1000);
-                    else if (statbuf.st_size > 1000000)
-                        printf("%5dM\t", statbuf.st_size / 1000000);
-                    else if (statbuf.st_size > 1e+9)
-                        printf("%5dG\t", statbuf.st_size / 1e+9);
+                    if (statbuf.st_size > 1e+3) {
+                        printf("%dK\t", statbuf.st_size / 1e+3);
+                    }
+                    else if (statbuf.st_size > 1e+6) {
+                        printf("%dM\t", statbuf.st_size / 1e+6);
+                    }
+                    else if (statbuf.st_size > 1e+9) {
+                        printf("%dG\t", statbuf.st_size / 1e+9);
+                    }
                     else
-                        printf("%5d\t", statbuf.st_size);
+                        printf("%d\t", statbuf.st_size);
                 }
 
                 //print date and time
                 if (dflag == 1) {
                     printf("%s\t", ctime(&statbuf.st_atime));
                 }
-            //    printf("\n");
 
                 printf("%s/%s\n", dir, entry->d_name);
                 if (S_ISDIR(statbuf.st_mode)) {
-                    printdir(buffer);
+                    printdir(buf);
                 }
             }
+            //This else goes through all the entries that are not directories
             else{
                 //print type of file
                 if (tflag == 1) {
                     if (S_ISDIR(statbuf.st_mode)) {
-                        fileType = "d";
-                        printf("%s", fileType);
+                        fType = "d";
+                        printf("%s", fType);
                     } else if (S_ISLNK(statbuf.st_mode)) {
-                        fileType = "s";
-                        printf("%s", fileType);
+                        fType = "s";
+                        printf("%s", fType);
                     } else {
-                        fileType = "-";
-                        printf("%s", fileType);
+                        fType = "-";
+                        printf("%s", fType);
                     }
                 }
+
                 //print permissions
                 if (pflag == 1) {
-                    // printf((S_ISDIR(statbuf.st_mode)) ? "d" : "-");
                     printf((statbuf.st_mode & S_IRUSR) ? "r" : "-");
                     printf((statbuf.st_mode & S_IWUSR) ? "w" : "-");
                     printf((statbuf.st_mode & S_IXUSR) ? "x" : "-");
@@ -247,37 +252,39 @@ void printdir(char *dir)
 
                 //print number of links to the inode
                 if (iflag == 1) {
-
-                    printf("%d\t", (unsigned int) statbuf.st_nlink);
+                    printf("%d\t",  statbuf.st_nlink);
                 }
                 //print UID
                 if (uflag == 1) {
                     pwd = getpwuid(statbuf.st_uid);
                     if ((pwd = getpwuid(statbuf.st_uid)) != NULL)
-                        printf("%-8.8s\t", pwd->pw_name);
+                        printf("%s\t", pwd->pw_name);
                     else
-                        printf("%-8d\t", statbuf.st_uid);
+                        printf("%d\t", statbuf.st_uid);
                 }
 
                 //print group id
                 if (gflag == 1) {
                     grp = getgrgid(statbuf.st_gid);
                     if ((grp = getgrgid(statbuf.st_gid)) != NULL)
-                        printf("%-8.8s\t", grp->gr_name);
+                        printf("%s\t", grp->gr_name);
                     else
-                        printf("%-8d\t", statbuf.st_gid);
+                        printf("%d\t", statbuf.st_gid);
                 }
 
                 //Print size
                 if (sflag == 1) {
-                    if (statbuf.st_size > 1000)
-                        printf("%5dK\t", statbuf.st_size / 1000);
-                    else if (statbuf.st_size > 1000000)
-                        printf("%5dM\t", statbuf.st_size / 1000000);
-                    else if (statbuf.st_size > 1e+9)
-                        printf("%5dG\t", statbuf.st_size / 1e+9);
+                    if (statbuf.st_size > 1e+3) {
+                        printf("%dK\t", statbuf.st_size / 1e+3);
+                    }
+                    else if (statbuf.st_size > 1e+6) {
+                        printf("%dM\t", statbuf.st_size / 1e+6);
+                    }
+                    else if (statbuf.st_size > 1e+9) {
+                        printf("%dG\t", statbuf.st_size / 1e+9);
+                    }
                     else
-                        printf("%5d\t", statbuf.st_size);
+                        printf("%d\t", statbuf.st_size);
                 }
 
                 //print date and time
@@ -286,9 +293,6 @@ void printdir(char *dir)
                 }
                 printf("%s/%s\n", dir, entry->d_name);
             }
-      //  if (S_ISDIR(statbuf.st_mode)) {
-    //        printdir(buffer);
-     //   }
 
     }
     closedir(d);
