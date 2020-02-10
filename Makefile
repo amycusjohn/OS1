@@ -1,6 +1,10 @@
-dt: main.o
-	gcc main.o -o dt
+CC = gcc
+CFLAGS =
+TARGET = bt
+OBJS = main.o
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 main.o: main.c
-	gcc -c main.c
+	$(CC) $(CFLAGS) -c main.c
 clean:
-	rm *.o dt
+	/bin/rm -f *.o $(TARGET)

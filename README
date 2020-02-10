@@ -19,4 +19,6 @@ were accepted, what functions were included, formatting, etc.
 
 As mentioned in class, honesty is the best policy. I do not want you too come 
 across any unexpected seg faults or issues like that. 
- 
+./dt to run 
+type make to make the program
+type make clean to make it clean
